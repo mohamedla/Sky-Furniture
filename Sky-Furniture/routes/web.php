@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,15 @@ Route::get('/item/{id}', [ItemController::class,'show']);
 Route::get('/brands',[BrandController::class,"index"]);
 Route::get('/brands/add',[BrandController::class,"create"]);
 Route::post('/brands/add',[BrandController::class,"store"]);
-Route::delete('/brands/{id}',[BrandController::class,"destroy"]);
 Route::get('/brands/{id}',[BrandController::class,"show"]);
 Route::post('/brands/{id}',[BrandController::class,"update"]);
+Route::delete('/brands/{id}',[BrandController::class,"destroy"]);
+
+
+// Category Routes
+Route::get('/categories',[CategoryController::class,"index"]);
+Route::get('/categories/add',[CategoryController::class,"create"]);
+Route::post('/categories/add',[CategoryController::class,"store"]);
+Route::get('/categories/{id}',[CategoryController::class,"show"]);
+Route::post('/categories/{id}',[CategoryController::class,"update"]);
+Route::delete('/categories/{id}',[CategoryController::class,"destroy"]);

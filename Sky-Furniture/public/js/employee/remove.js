@@ -15,8 +15,8 @@ $(".removeBtn div").on("click",(event)=>{
         url: thisDiv.attr("data_url"),
         success:(res)=>{
             if (res.isRemoved) {
-                alert('Item Have Been Removed');
                 thisDiv.parent().parent().css('display',"none");
+                alert('Item Have Been Removed');
             }else if(res.message !== ""){
                 alert(res.message);
             }else{

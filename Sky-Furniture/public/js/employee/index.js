@@ -35,6 +35,8 @@ $(window).on('load',()=>{
     $(window).on("resize",()=>{
         if (window.innerWidth >= 1024) {
             $("nav").css("display","block");
+        }else{
+            $("nav").css("display","none");
         }
     });
 });

@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Item;
 
-class BrandController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,12 +15,11 @@ class BrandController extends Controller
      */
     public function index()
     {
-        //
-        $brands = Brand::select("brand_id","brand_code","brand_name")->orderBy('brand_name', 'asc')->get();
-        foreach ($brands as $brand) {
-            $brand->product = Item::where("brand_id",$brand->brand_id)->count();
+        $categories = Category::select("category_id","category_code","category_name")->orderBy('category_name', 'asc')->get();
+        foreach ($categories as $category) {
+            $category->product = Item::where("category_id",$category->category_id)->count();
         }
-        return view("brand.brands",["brands"=>$brands]);
+        return view('category.categories',['categories'=>$categories]);
     }
 
     /**
@@ -31,8 +29,7 @@ class BrandController extends Controller
      */
     public function create()
     {
-        // Go To Add Brand Page
-        return  view('brand.add');
+        return view('category.add');
     }
 
     /**
@@ -43,19 +40,19 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        // store new brand into database manage using ajax request
+        // store new category into database manage using ajax request
         $message = "";
         $isAdded = true;
         try {
-            Brand::insert([
-                'brand_code' => strtoupper(dechex(time())),
-                'brand_name' => strtoupper($request->brand_name),
+            Category::insert([
+                'category_code' => strtoupper(dechex(time())),
+                'category_name' => ucwords($request->category_name),
                 'created_at' => now(),
             ]);
-            $message =  'Brand Successfull Added';
+            $message =  'Category Successfull Added';
         } catch (\Throwable $th) {
             if ($th->getCode() == 23000) {
-                $message =  'This Brand Already Exist';
+                $message =  'This Category Already Exist';
             }else{
                 $message = "Some Thing Went Wrong";
             }
@@ -72,8 +69,8 @@ class BrandController extends Controller
      */
     public function show($id)
     {
-        $brand = Brand::where("brand_id",$id)->select('brand_name','brand_id')->get()[0];
-        return view('brand.show',['brand'=>$brand]);
+        $category = Category::where("category_id",$id)->select('category_name','category_id')->get()[0];
+        return view('category.show',['category'=>$category]);
     }
 
     /**
@@ -98,14 +95,13 @@ class BrandController extends Controller
     {
         $message = "";
         try {
-            if (Brand::where('brand_id',$id)->update(['brand_name'=>strtoupper($request->brand_name)])) {
+            if (Category::where('category_id',$id)->update(['category_name'=>ucwords($request->category_name)])) {
                 $message =  'Category Successfull Updated';
             }
         } catch (\Throwable $th) {
             $message = "Some Thing Went Wrong";
         }
         return ['message' => $message];
-        
     }
 
     /**
@@ -119,12 +115,12 @@ class BrandController extends Controller
         //
         $message = "";
         $isRemoved = false;
-        $items = Item::where("brand_id",$id)->count();
+        $items = Item::where("category_id",$id)->count();
         if ($items != 0) {
-            $message = "This Brand Still Have Items In The Stock";
+            $message = "This Category Still Have Items In The Stock";
         }else {
             try {
-                $des = Brand::where("brand_id",$id)->delete();
+                $des = Category::where("category_id",$id)->delete();
                 $isRemoved = true;
             } catch (\Throwable $th) {
                 $message = "Error Happen Code ".$th->getCode();

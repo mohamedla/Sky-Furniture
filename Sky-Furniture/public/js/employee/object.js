@@ -36,11 +36,7 @@ $(window).on('load',()=>{
         event.preventDefault();
         const thisForm = $(event.currentTarget);
         $.post(thisForm.attr('action'),thisForm.serialize(),(res)=>{
-            if (res == true) {
-                alert('The Item Is Updated');
-            } else {
-                alert('Something Went Wrong Can\'t Update The Item');
-            }
+            alert(res.message);
         });
     });
     // remove input field
