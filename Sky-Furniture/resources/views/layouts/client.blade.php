@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sky Furniture</title>
+    <link rel="shortcut icon" href="{{asset('img/cloud.svg')}}" type="image/x-icon">
     <link rel="stylesheet" href="{{asset('css/client.css')}}">
 </head>
 <body class="relative">
@@ -161,7 +162,7 @@
         </footer>
     </div>
     <script src="{{asset('js/jquery.js')}}"></script>
-    <script src="{{asset('js/index.js')}}"></script>
+    <script src="{{asset('js/client/index.js')}}"></script>
     @yield('script')
 </body>
 </html>

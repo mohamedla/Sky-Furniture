@@ -57,7 +57,7 @@
                     if($item->discount != 0){
                         $newPrice = $item->price - (($item->discount/100)*$item->price);
                     }
-                @endphp
+                @endphpcd 
                 @if($item->discount != 0)
                     <p>
                         <span class="font-bold">Price:</span>&ThickSpace;<span class="uppercase"><del>{{$item->price}}&dollar;&ThickSpace; </del>{{$newPrice}}&dollar;</span>
@@ -88,7 +88,7 @@
                 <!-- extra images -->
                 <div class="extraImgs">
                         @foreach($extraImgs as $image)
-                        <img src="{{asset('img/items/'.$image->image)}}">
+                        <img src="{{asset('img/items/'.$image->image    )}}">
                         @endforeach
                 </div>
             </div>
@@ -180,7 +180,7 @@
 
 @endsection
 @section('script')
-    <script type="module" src="{{asset('js/index-main.js')}}"></script>
-    <script type="module" src="{{asset('js/item.js')}}"></script>
+    <script type="module" src="{{asset('js/client/index-main.js')}}"></script>
+    <script type="module" src="{{asset('js/client/item.js')}}"></script>
 @endsection
             
