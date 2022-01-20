@@ -105,7 +105,7 @@ class BrandController extends Controller
             $message = "Some Thing Went Wrong";
         }
         return ['message' => $message];
-        
+
     }
 
     /**

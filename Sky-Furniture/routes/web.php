@@ -40,6 +40,12 @@ use App\Http\Controllers\CategoryController;
 
 // Items Routes
 Route::get('/item/{id}', [ItemController::class,'show']);
+Route::get('/items',[ItemController::class,"index"]);
+Route::get('/items/add',[ItemController::class,"create"]);
+Route::post('/items/add',[ItemController::class,"store"]);
+Route::get('/items/{id}',[ItemController::class,"edit"]);
+Route::post('/items/{id}',[ItemController::class,"update"]);
+Route::delete('/items/{id}',[ItemController::class,"destroy"]);
 
 // Brands Routes
 Route::get('/brands',[BrandController::class,"index"]);
