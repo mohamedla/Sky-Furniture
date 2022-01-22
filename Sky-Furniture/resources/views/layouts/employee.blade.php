@@ -15,15 +15,15 @@
     <!-- loader -->
     <div id='loader-container'>
         <div id="loader-wrapper" class="fixed top-0 left-0 w-screen h-screen z-[250]">
-            <div id="loader">  
-                <img src="{{asset('img/logo.png')}}" alt="loader">        
+            <div id="loader">
+                <img src="{{asset('img/logo.png')}}" alt="loader">
             </div>
             <div class="loader-section section-left"></div>
             <div class="loader-section section-right"></div>
         </div>
     </div>
     <!-- Wrapper -->
-    <div class="wrapper">   
+    <div class="wrapper">
         <header>
             <div class="logo">
                 <a href="/employee"><img src="{{asset('img/logo_transparent.png')}}" alt="Sky" title="Sky Furniture"></a>
@@ -144,7 +144,7 @@
                             </div>
                         </summary>
                         <div>
-                            <a href="addItem.html">
+                            <a href="/items/add">
                                 <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
                                 <span>Add New Product</span>
                             </a>

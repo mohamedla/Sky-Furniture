@@ -1,8 +1,8 @@
 //  Declare Fuction to use inside Html
 $.ajaxSetup({
     headers: {
-        'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-    }
+        "X-CSRF-TOKEN": $('meta[name="_token"]').attr("content"),
+    },
 });
 // remove Field
 function remove(event) {
@@ -11,10 +11,11 @@ function remove(event) {
     const thisForm = $("form");
     $.post(
         thisForm.attr("action"),
-        { input_name: itsDiv.find("input").prop("name"), process: 'del' },// request data
+        { input_name: itsDiv.find("input").prop("name"), process: "del" }, // request data
         (res) => {
             alert(res.message);
-            if (res.isRemoved) { // check if the field is already removed
+            if (res.isRemoved) {
+                // check if the field is already removed
                 itsDiv.remove();
             }
         }
@@ -87,20 +88,20 @@ const editIcon =
 }*/
 
 function change(event) {
-    const target  = $(event.currentTarget);
+    const target = $(event.currentTarget);
     const theInput = target.parent().find(".input");
     if (target.children().attr("class") == "edit") {
         target.html(saveIcon);
-        theInput.prop("readonly",false);
+        theInput.prop("readonly", false);
         theInput.toggleClass("disabled").toggleClass("enabled");
-    } else if(target.children().attr("class") == "save") {
+    } else if (target.children().attr("class") == "save") {
         // check if the input is not empty
-        if (target.parent().find('.input').val() != "") {
+        if (target.parent().find(".input").val() != "") {
             target.html(editIcon);
-            theInput.prop("readonly",true);
+            theInput.prop("readonly", true);
             theInput.toggleClass("disabled").toggleClass("enabled");
-        }else{
-            alert('Empty Or Un Valid Values Can\'t Be Saved')
+        } else {
+            alert("Empty Or Un Valid Values Can't Be Saved");
         }
     }
 }
@@ -109,7 +110,9 @@ function change(event) {
 function imgSelect(event) {
     var file = event.currentTarget.files[0];
     $(event.currentTarget)
-        .parent().find("img").attr("src", URL.createObjectURL(file));
+        .parent()
+        .find("img")
+        .attr("src", URL.createObjectURL(file));
 }
 $(window).on("load", () => {
     // enable and disable input field
@@ -124,7 +127,7 @@ $(window).on("load", () => {
     function addField(event, field) {
         $(event.currentTarget).parent().parent().append(field);
     }
-    $('form').on("submit",(event)=>{
+    $("form").on("submit", (event) => {
         event.preventDefault();
         const thisForm = $(event.currentTarget);
         const formData = new FormData(thisForm[0]);
@@ -132,20 +135,24 @@ $(window).on("load", () => {
         //     alert(res.message);
         // });
         $.ajax({
-            url: thisForm.attr('action'),
+            url: thisForm.attr("action"),
             data: formData,
-            type: 'POST',
+            type: "POST",
             cache: false,
             contentType: false,
             processData: false,
-            success:(res)=>{
-                    $('#item_message').fadeIn().find('span').text(res.message);
-                    setTimeout(()=>{
-                        $('#item_message').fadeOut(1000);
-                    },2000);
-                    $('#item_message')
-                    // alert(res.message);
+            success: (res) => {// coustomize the result of the request
+                if (res.isRemoved) { // every thing goes will
+                    $("#item_message").attr("background-color", "lightgreen");
+                } else { // some thing went wrong
+                    $("#item_message").attr("background-color", "lightred");
+                    console.log(res.message);
                 }
+                $("#item_message").fadeIn().find("span").text(res.message);// display the response message
+                setTimeout(() => {
+                    $("#item_message").fadeOut(1500);
+                }, 3000); // set time out to remove the response message
+            },
         });
     });
     // add color field
@@ -193,14 +200,14 @@ $(window).on("load", () => {
         colorCount++;
     });
     // add Image Feild
-    const imgCount = 1;
+    let imgCount = 1;
     $("form .addImg").on("click", (event) => {
         let imgField;
         if ($("form").parent().hasClass("new")) {
             imgField = `
             <div class="input-con">
                 <img id="image-new${imgCount}" src="" alt="Extra Image">
-                <input id="image-new${imgCount}" class="input disabled" style="width: 80%;" required onchange = "imgSelect(event);" type="file" name="image_new${imgCount}" accept="image/*">
+                <input id="image-new${imgCount}" class="input disabled" style="width: 80%;" required onchange = "imgSelect(event);" type="file" name="image_new_${imgCount}" accept="image/*">
             <div>
             <div class="remove" onclick="remove(event);">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -208,7 +215,7 @@ $(window).on("load", () => {
         } else {
             imgField = `<div class="input-con">
                     <img id="image-new${imgCount}" src="" alt="Extra Image">
-                    <input id="image-new${imgCount}" class="input enabled" style="width: 80%;" required onchange = "imgSelect(event);" type="file" name="image-new${imgCount}" accept="image/*">
+                    <input id="image-new${imgCount}" class="input enabled" style="width: 80%;" required onchange = "imgSelect(event);" type="file" name="image_new_${imgCount}" accept="image/*">
                     <div class="change" onclick="change(event);">
                         <svg class="save" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>/svg>
                     </div>

@@ -17,7 +17,7 @@ class CreateColorsTable extends Migration
             $table->bigIncrements('color_id');
             $table->bigInteger('item_id')->unsigned();
             $table->char('color',50);
-            $table->integer('pieces');
+            $table->integer('pieces')->default(0);
             $table->timestamps();
 
             $table->foreign('item_id')->references('item_id')->on('items');

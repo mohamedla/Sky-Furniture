@@ -16,7 +16,7 @@ class CreateExtraImgsTable extends Migration
         Schema::create('extra_imgs', function (Blueprint $table) {
             $table->bigIncrements('img_id');
             $table->bigInteger('item_id')->unsigned();
-            $table->string('image',255);
+            $table->string('image',255)->unique();
             $table->timestamps();
 
             $table->foreign('item_id')->references('item_id')->on('items');

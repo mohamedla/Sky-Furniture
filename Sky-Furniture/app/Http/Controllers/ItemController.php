@@ -137,7 +137,7 @@ class ItemController extends Controller
                     'materials' => urldecode($request->materials),
                     'updated_at' => now(),
                 ]);
-                if (isset($_FILES['main_img']['name'])) {
+                if ($_FILES['main_img']['tmp_name'] != "") {
                     // update the main image field
                     $pic_name = $_FILES['main_img']['name']; //the name of the uploaded image
                     $new_name = time().$pic_name; // assining new name depeding on time function to ensure its unique name
@@ -182,19 +182,36 @@ class ItemController extends Controller
                         }
                     }
                 }
-                foreach ($_FILES as $key => $value) {
-                    if ( preg_match('/^image/',$key) && $_FILES[$key]['tmp_name'] != "") {
+                foreach ($_FILES as $key => $value) { // get the files uploaded
+                    if ( preg_match('/^image/',$key) && $_FILES[$key]['tmp_name'] != "") {//find the extra image files
                         $n_key = explode('_',$key);
-                        // update the main image field
-                        $pic_name = $_FILES[$key]['name']; //the name of the uploaded image
-                        $new_name = time().$pic_name; // assining new name depeding on time function to ensure its unique name
-                        $stor_tmp = $_FILES[$key]['tmp_name']; // get the tenproray location of the uploaded image
-                        if (move_uploaded_file($stor_tmp, $this->store_path . $new_name)) {
-                            Extra_Img::where('img_id',$n_key[1])->update([
-                                'image' => $new_name,
-                                'updated_at' => now(),
-                            ]);
+                        if ($n_key[1] != 'new'){
+                            // update the main image field
+                            $pic_name = $_FILES[$key]['name']; //the name of the uploaded image
+                            $new_name = time().$pic_name; // assining new name depeding on time function to ensure its unique name
+                            $stor_tmp = $_FILES[$key]['tmp_name']; // get the tenproray location of the uploaded image
+                            if (move_uploaded_file($stor_tmp, $this->store_path . $new_name)) {
+                                //update the extra image
+                                Extra_Img::where('img_id',$n_key[1])->update([
+                                    'image' => $new_name,
+                                    'updated_at' => now(),
+                                ]);
+                            }
+                        }else {
+                            // update the main image field
+                            $pic_name = $_FILES[$key]['name']; //the name of the uploaded image
+                            $new_name = time().$pic_name; // assining new name depeding on time function to ensure its unique name
+                            $stor_tmp = $_FILES[$key]['tmp_name']; // get the tenproray location of the uploaded image
+                            if (move_uploaded_file($stor_tmp, $this->store_path . $new_name)) {
+                                //update the extra image
+                                Extra_Img::insert([
+                                    'item_id' => $id,
+                                    'image' => $new_name,
+                                    'created_at' => now(),
+                                ]);
+                            }
                         }
+
                     }
                 }
                 $message = "Item Updated";
