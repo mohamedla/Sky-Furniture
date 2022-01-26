@@ -9,7 +9,7 @@ $.ajaxSetup({
 $(".removeBtn div").on("click",(event)=>{
     event.preventDefault();
     const thisDiv = $(event.currentTarget);
-    // ajax request to delete Item 
+    // ajax request to delete Item
     $.ajax({
         method: "DELETE",
         url: thisDiv.attr("data_url"),
@@ -17,7 +17,7 @@ $(".removeBtn div").on("click",(event)=>{
             if (res.isRemoved) {
                 thisDiv.parent().parent().css('display',"none");
                 alert('Item Have Been Removed');
-            }else if(res.message !== ""){
+            }else if(res.message !== "" && res.message !== undefined){
                 alert(res.message);
             }else{
                 alert('Some Thing Went Wrong');

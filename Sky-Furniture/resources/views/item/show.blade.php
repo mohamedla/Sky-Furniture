@@ -57,10 +57,10 @@
                     if($item->discount != 0){
                         $newPrice = $item->price - (($item->discount/100)*$item->price);
                     }
-                @endphpcd 
+                @endphp
                 @if($item->discount != 0)
                     <p>
-                        <span class="font-bold">Price:</span>&ThickSpace;<span class="uppercase"><del>{{$item->price}}&dollar;&ThickSpace; </del>{{$newPrice}}&dollar;</span>
+                        <span class="font-bold">Price:</span>&ThickSpace;<span class="uppercase"><del>{{$item->price}}&dollar;</del>&ThickSpace; {{$newPrice}}&dollar;</span>
                     </p>
                 @else
                     <p>
@@ -93,7 +93,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="extraDel">
             <div>
                 <div id="description" class="triger"><span>Product Description</span></div>
@@ -183,4 +183,4 @@
     <script type="module" src="{{asset('js/client/index-main.js')}}"></script>
     <script type="module" src="{{asset('js/client/item.js')}}"></script>
 @endsection
-            
+

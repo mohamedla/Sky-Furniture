@@ -1270,8 +1270,10 @@ main .control {
 .pre_color {
     border-radius: 50px;
     width: 5vw;
-    height: calc((5vw) * (4 / 5));
+    height: 5vw;
     margin-right: 3px;
+    box-sizing: border-box;
+    padding: 20px;
 }
 
 main .control h1 {
@@ -1317,6 +1319,7 @@ main .control form label {
     width: 100%;
     grid-auto-flow: column;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
 }
 
 .input-3col {

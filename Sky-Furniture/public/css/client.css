@@ -3022,7 +3022,7 @@ main .ItemDel .extraDel .triger{
 }
 
 main .ItemDel .extraDel .mt-5{
-  display: flex;
+  /* display: flex; */
   width: 100%;
   align-items: center;
   justify-content: center;

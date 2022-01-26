@@ -39,7 +39,9 @@ class ItemController extends Controller
      */
     public function create()
     {
-        //
+        $brands = Brand::select("brand_id", "brand_name")->orderBy('brand_name', 'asc')->get();
+        $categories = Category::select("category_id", "category_name")->orderBy('category_name', 'asc')->get();
+        return view('item.add', ["brands" => $brands, "categories" => $categories]);
     }
 
     /**
@@ -50,7 +52,70 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $message = "";
+        $is_added = true;
+        try {
+            // update the main image field
+            $pic_name = $_FILES['main_img']['name']; //the name of the uploaded image
+            $new_name = time() . $pic_name; // assining new name depeding on time function to ensure its unique name
+            $stor_tmp = $_FILES['main_img']['tmp_name']; // get the tenproray location of the uploaded image
+            $item_code = strtoupper(dechex(time()));
+            if ($request->main_img->move(public_path('img/items'),$new_name)) {
+                Item::insert([
+                    'item_code' => $item_code,
+                    'model' => $request->model,
+                    'brand_id' => $request->brand,
+                    'category_id' => $request->category,
+                    'width' => $request->width,
+                    'height' => $request->height,
+                    'depth' => $request->depth,
+                    'price' => $request->price,
+                    'discount' => $request->discount,
+                    'main_img' => $new_name,
+                    'description' => urldecode($request->description),
+                    'materials' => urldecode($request->materias),
+                    'created_at' => now(),
+                ]);
+            }
+            $item_id = (Item::where('item_code', $item_code)->get('item_id'))[0]->item_id;
+            foreach ($request->post() as $key => $value) { // adding colors
+                if (preg_match('/^color/', $key)) {
+                    $nKey = explode('_', $key);
+                    foreach ($request->post() as $key2 => $value2) {
+                        if (preg_match('/^pieces/', $key2)) {
+                            $nKey2 = explode('_', $key2);
+                            if ($nKey2[2] == $nKey[2]) {
+                                Color::insert([
+                                    'item_id' => $item_id,
+                                    'color' => $value,
+                                    'pieces' => $value2,
+                                    'created_at' => now(),
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+            foreach ($_FILES as $key => $value) { // adding extra image
+                if (preg_match('/^image/', $key) && $_FILES[$key]['tmp_name'] != "") {
+                    $extra_name = $_FILES[$key]['name']; //the name of the uploaded image
+                    $new_extra_name = time() . $extra_name; // assining new name depeding on time function to ensure its unique name
+                    if ($request[$key]->move(public_path('img/items'),$new_extra_name)) {
+                        Extra_Img::insert([
+                            'item_id' => $item_id,
+                            'image' => $new_extra_name,
+                            'created_at' => now(),
+                        ]);
+                    }
+                }
+            }
+            $message = "Item Added";
+        } catch (\Throwable $th) {
+            print $th;
+            $message = 'Some Thing Went Wrong Code: ' . $th->getCode();
+            $is_added = false;
+        }
+        return ['message' => $message, 'isRemoved' => $is_added];
     }
 
     /**
@@ -103,11 +168,11 @@ class ItemController extends Controller
             // Delete field from Colors and Extra images
             if (isset($request->process)) {
                 if ($request->process == 'del') {
-                    $req_array = explode('_',$request->input_name);
+                    $req_array = explode('_', $request->input_name);
                     // detect that the field is in the color table
                     if ($req_array[0] == 'color') {
                         // the item must at least have one color
-                        if (Color::where('item_id',$id)->count() > 0) {
+                        if (Color::where('item_id', $id)->count() > 0) {
                             // delete the row
                             Color::where('color_id', $req_array[1])->delete();
                             $message = "The Color Field Has Been Removed";
@@ -115,8 +180,8 @@ class ItemController extends Controller
                             $message = "Can't Remove the Color as It Is The Last One";
                             $is_removed = false;
                         }
-                    // detect that the field is in the extra_imgs table
-                    }elseif ($req_array[0] == 'image') {
+                        // detect that the field is in the extra_imgs table
+                    } elseif ($req_array[0] == 'image') {
                         // delete the row
                         Extra_Img::where('img_id', $req_array[1])->delete();
                         $message = "The Extra Img Field Has Been Removed";
@@ -124,7 +189,7 @@ class ItemController extends Controller
                 }
             } else { // editing on saved changes
                 // update the item
-                Item::where('item_id',$id)->update([
+                Item::where('item_id', $id)->update([
                     'model' => urldecode($request->model),
                     'brand_id' => $request->brand_id,
                     'category_id' => $request->category_id,
@@ -140,10 +205,10 @@ class ItemController extends Controller
                 if ($_FILES['main_img']['tmp_name'] != "") {
                     // update the main image field
                     $pic_name = $_FILES['main_img']['name']; //the name of the uploaded image
-                    $new_name = time().$pic_name; // assining new name depeding on time function to ensure its unique name
+                    $new_name = time() . $pic_name; // assining new name depeding on time function to ensure its unique name
                     $stor_tmp = $_FILES['main_img']['tmp_name']; // get the tenproray location of the uploaded image
                     if (move_uploaded_file($stor_tmp, $this->store_path . $new_name)) {
-                        Item::where('item_id',$id)->update([
+                        Item::where('item_id', $id)->update([
                             'main_img' => $new_name,
                             'updated_at' => now(),
                         ]);
@@ -151,17 +216,17 @@ class ItemController extends Controller
                 }
                 foreach ($request->post() as $key => $value) { // get all the fileds send by post request
                     // find the color fields
-                    if (preg_match('/^color/',$key)) {
-                        $n_key = explode('_',$key);
+                    if (preg_match('/^color/', $key)) {
+                        $n_key = explode('_', $key);
                         if ($n_key[1] != 'new') { // it is already exists row
                             // update the row
                             Color::where('color_id', $n_key[1])->update([
                                 'color' => urldecode($value),
                                 'updated_at' => now(),
                             ]);
-                        }else {
+                        } else {
                             foreach ($request->post() as $key2 => $value2) {
-                                if ($key2 == 'pieces_'.$n_key[1].'_'.$n_key[2]) {
+                                if ($key2 == 'pieces_' . $n_key[1] . '_' . $n_key[2]) {
                                     Color::insert([
                                         'item_id' => $id,
                                         'color' => $value,
@@ -171,8 +236,8 @@ class ItemController extends Controller
                                 }
                             }
                         }
-                    }elseif (preg_match('/^pieces/',$key)) {// find the pieces fields
-                        $n_key = explode('_',$key);
+                    } elseif (preg_match('/^pieces/', $key)) { // find the pieces fields
+                        $n_key = explode('_', $key);
                         if ($n_key[1] != 'new') { // it is already exists row
                             // update the row
                             Color::where('color_id', $n_key[1])->update([
@@ -183,24 +248,24 @@ class ItemController extends Controller
                     }
                 }
                 foreach ($_FILES as $key => $value) { // get the files uploaded
-                    if ( preg_match('/^image/',$key) && $_FILES[$key]['tmp_name'] != "") {//find the extra image files
-                        $n_key = explode('_',$key);
-                        if ($n_key[1] != 'new'){
+                    if (preg_match('/^image/', $key) && $_FILES[$key]['tmp_name'] != "") { //find the extra image files
+                        $n_key = explode('_', $key);
+                        if ($n_key[1] != 'new') {
                             // update the main image field
                             $pic_name = $_FILES[$key]['name']; //the name of the uploaded image
-                            $new_name = time().$pic_name; // assining new name depeding on time function to ensure its unique name
+                            $new_name = time() . $pic_name; // assining new name depeding on time function to ensure its unique name
                             $stor_tmp = $_FILES[$key]['tmp_name']; // get the tenproray location of the uploaded image
                             if (move_uploaded_file($stor_tmp, $this->store_path . $new_name)) {
                                 //update the extra image
-                                Extra_Img::where('img_id',$n_key[1])->update([
+                                Extra_Img::where('img_id', $n_key[1])->update([
                                     'image' => $new_name,
                                     'updated_at' => now(),
                                 ]);
                             }
-                        }else {
+                        } else {
                             // update the main image field
                             $pic_name = $_FILES[$key]['name']; //the name of the uploaded image
-                            $new_name = time().$pic_name; // assining new name depeding on time function to ensure its unique name
+                            $new_name = time() . $pic_name; // assining new name depeding on time function to ensure its unique name
                             $stor_tmp = $_FILES[$key]['tmp_name']; // get the tenproray location of the uploaded image
                             if (move_uploaded_file($stor_tmp, $this->store_path . $new_name)) {
                                 //update the extra image
@@ -211,17 +276,15 @@ class ItemController extends Controller
                                 ]);
                             }
                         }
-
                     }
                 }
                 $message = "Item Updated";
             }
-
         } catch (\Throwable $th) {
-            $message = 'Some Thing Went Wrong Code: '. $th->getCode();
+            $message = 'Some Thing Went Wrong Code: ' . $th->getCode();
             $is_removed = false;
         }
-        return ['message'=>$message,'isRemoved'=>$is_removed];
+        return ['message' => $message, 'isRemoved' => $is_removed];
     }
 
     /**
@@ -232,6 +295,16 @@ class ItemController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $message = '';
+        $is_removed = false;
+        try {
+            Color::where('item_id', $id)->delete();
+            Extra_Img::where('item_id', $id)->delete();
+            Item::where('item_id', $id)->delete();
+            $is_removed = true;
+        } catch (\Throwable $th) {
+            $message = 'Can Not Remove The Item Error Code : ' . $th->getCode();
+        }
+        return ['message' => $message, 'isRemoved' => $is_removed];
     }
 }

@@ -131,9 +131,6 @@ $(window).on("load", () => {
         event.preventDefault();
         const thisForm = $(event.currentTarget);
         const formData = new FormData(thisForm[0]);
-        // $.post(thisForm.attr('action'),formData,(res)=>{
-        //     alert(res.message);
-        // });
         $.ajax({
             url: thisForm.attr("action"),
             data: formData,
@@ -143,9 +140,9 @@ $(window).on("load", () => {
             processData: false,
             success: (res) => {// coustomize the result of the request
                 if (res.isRemoved) { // every thing goes will
-                    $("#item_message").attr("background-color", "lightgreen");
+                    $("#item_message").find("span").css("background-color", "lightgreen");
                 } else { // some thing went wrong
-                    $("#item_message").attr("background-color", "lightred");
+                    $("#item_message").find("span").css("background-color", "lightcoral");
                     console.log(res.message);
                 }
                 $("#item_message").fadeIn().find("span").text(res.message);// display the response message
@@ -156,15 +153,12 @@ $(window).on("load", () => {
         });
     });
     // add color field
-    const colorCount = 1;
+    let colorCount = 1;
     $("form .addColor").on("click", (event) => {
         let colorField;
         if ($("form").parent().hasClass("new")) {
             colorField = `
             <div class="input-2col mt-1">
-                <div class="pre_color" style="background-color: #000">
-
-                </div>
                 <div class="input-con">
                     <input class="input mr-1 disabled" required type="text" name="color_new_${colorCount}">
                 </div>
